@@ -4,16 +4,23 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
-    <script src="script.js"></script>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="script.js" type="module"></script>
     <link rel="stylesheet" href="style.css">
+
+
 </head>
 <body>
 
 
-<form action="" method="POST">
+    <header>
+        <h1>Incident Report</h1>
+    </header>
 
+    <main>
+<form id="saveForm" >
 
-<input type="file">
+<input type="file" name="file1" accept="image/*" capture="environment"  />
 <input placeholder="reportName" type="text" name="reportName">
 <input placeholder="reportEmail" type="text" name="reportEmail">
 <input placeholder="category" type="text" name="category">
@@ -21,11 +28,39 @@
 <input placeholder="description" type="text" name="description">
 <input placeholder="imageBase64" type="text" name="imageBase64">
 <input placeholder="gps" type="text" name="gps">
-
+<button type="submit">Submit</button>
 
 </form>
 
 
+
+<section class="overview">
+    <form class="searchInfo" id="filterForm">
+        <input type="text" placeholder="Incident Name" name="name">
+        <input type="text" placeholder="Incident Email" name="email">
+        <input type="text" placeholder="Incident Category" name="category">
+        <input type="text" placeholder="Incident Location" name="location">
+        <input type="text" placeholder="Incident Description" name="description">
+        <input type="text" placeholder="Incident GPS" name="gps">
+        <button type="submit">Search</button>
+
+
+    </form>
+
+
+</section>
+
+
+
+<section class="list">
+
+
+
+</section>
+
+
+
+</main>
 
 </body>
 </html>
