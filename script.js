@@ -3,6 +3,9 @@ import { renderIncidents } from "./UIManager.js"
 
 const getFilteredPayloads = ()=>{
 
+
+const check = localStorage["pattern"] ?? null
+if(!check){return getStoredIncidents()}    
 const pattern = JSON.parse(localStorage["pattern"]) ?? null
 
 
@@ -33,7 +36,6 @@ const startWatcher = ()=>{
         localStorage["started"]='1'
 
 
-        console.log(getFilteredPayloads())
 renderIncidents(getFilteredPayloads())
 
     },1000)
@@ -47,8 +49,10 @@ startWatcher()
 
 Object.prototype.matches = function (pattern) {
     for (const key in pattern) {
+        if(!pattern[key]){continue}
         if (pattern[key] && this[key] !== pattern[key]) {
             return false;
+            
         }
     }
     return true;
@@ -164,25 +168,23 @@ $("#saveForm").submit(e=>{
 
 $("#filterForm").submit(e=>{
 
-
     e.preventDefault()
 
 
     const data = Object.fromEntries(new FormData(filterForm));
 
-
     const pattern = {
-        reportName:data.reportName ?? null,
-        reportEmail:data.reportEmail ?? null,
-        category:data.category ?? null,
-        location:data.location ?? null,
-        description:data.description ?? null,
-        imageBase64:btoa(data.imageBase64) ?? null,
-        gps:data.gps ?? null,
+        reportName:data.reportName || null,
+        reportEmail:data.reportEmail|| null,
+        category:data.category || null,
+        location:data.location || null,
+        description:data.description || null,
+        gps:data.gps || null,
 
 
 
     }
+    
 
 
     localStorage['pattern']=JSON.stringify(pattern)
