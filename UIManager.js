@@ -4,24 +4,29 @@ const renderIncidents = (list) => {
     if (!list) {
         return
     }
-    $(".list").html("")
+    const listEl = document.querySelector(".list")
+    if (!listEl) return
+    listEl.innerHTML = ""
 
     for (let obj of list) {
         if (Object.keys(obj).length === 0) { continue }
 
-        const el = $("<div></div>")
-        el
-            .addClass("card")
-            .html(`
-    <p><strong>Name:</strong> ${obj.reportName}</p>
+        const el = document.createElement("div")
+        el.classList.add("card")
+
+        const reporterName = obj.reporterName ?? obj.reportName ?? ""
+        const reporterEmail = obj.reporterEmail ?? obj.reportEmail ?? ""
+
+        el.innerHTML = `
+    <p><strong>Name:</strong> ${reporterName}</p>
     <p><strong>Location:</strong> ${obj.location}</p>
     <p><strong>Category:</strong> ${obj.category}</p>
-    <p><strong>Email:</strong> ${obj.reportEmail}</p>
+    <p><strong>Email:</strong> ${reporterEmail}</p>
     <p><strong>GPS:</strong> ${obj.gps}</p>
-`)
+`
 
 
-        $(".list").append(el);
+        listEl.appendChild(el)
 
 
 
