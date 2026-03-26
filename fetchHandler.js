@@ -1,4 +1,4 @@
-import { compressImageTo2MB } from "./fileManager.js";
+import { compressDataUrlTo2MB, compressImageTo2MB } from "./fileManager.js";
 
 const DEFAULT_INCIDENT_API_URL = "http://wa3lm.dev.spsejecna.net/incident/api.php";
 
@@ -8,9 +8,15 @@ const buildIncidentPayload = async (formEl) => {
 
   const fileInput = formEl.querySelector('input[type="file"]');
   const file = fileInput?.files?.length ? fileInput.files[0] : null;
-  if (!file) throw new Error("obrazek je potreba");
 
-  const imageBase64 = await compressImageTo2MB(file);
+  const captured = (o.capturedImageBase64 || "").toString().trim();
+  const hasCaptured = captured.startsWith("data:image/");
+
+  if (!file && !hasCaptured) throw new Error("obrazek je potreba");
+
+  const imageBase64 = file
+    ? await compressImageTo2MB(file)
+    : await compressDataUrlTo2MB(captured);
 
   return {
     reporterName: o.reporterName,

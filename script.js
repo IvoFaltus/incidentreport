@@ -1,6 +1,7 @@
 import { renderIncidents } from "./UIManager.js"
 import { buildIncidentPayload, postIncident } from "./fetchHandler.js"
 import { initMap, setIncidentLocation } from "./map.js"
+import { initInlineWebcam } from "./webcam.js"
 
 const matchesPattern = (obj, pattern) => {
     if (!pattern || typeof pattern !== "object") return true
@@ -159,11 +160,52 @@ startWatcher()
 window.addEventListener("DOMContentLoaded", () => {
     const filterForm = document.getElementById("filterForm")
     const saveForm = document.getElementById("saveForm")
+    const openWebcamBtn = document.getElementById("openWebcamBtn")
+    const capturedImageInput = document.getElementById("capturedImageBase64")
+    const imagePreview = document.getElementById("imagePreview")
+    const fileInput = document.getElementById("incidentImageFile")
 
     if (!filterForm || !saveForm) {
         console.error("Missing #filterForm or #saveForm in DOM")
         return
     }
+
+    const setPreview = (dataUrl) => {
+        if (!imagePreview) return
+        if (!dataUrl) {
+            imagePreview.src = ""
+            imagePreview.classList.add("d-none")
+            return
+        }
+        imagePreview.src = dataUrl
+        imagePreview.classList.remove("d-none")
+    }
+
+    const clearCaptured = () => {
+        if (capturedImageInput) capturedImageInput.value = ""
+        try { localStorage.removeItem("imgData") } catch {}
+    }
+
+    const setCaptured = (dataUrl) => {
+        if (capturedImageInput) capturedImageInput.value = dataUrl
+        try { localStorage.setItem("imgData", dataUrl) } catch {}
+        if (fileInput) fileInput.value = ""
+        setPreview(dataUrl)
+    }
+
+    const webcam = initInlineWebcam({
+        container: document.getElementById("webcamContainer"),
+        openButton: openWebcamBtn,
+        closeButton: document.getElementById("webcamCloseBtn"),
+        startButton: document.getElementById("webcamStartBtn"),
+        captureButton: document.getElementById("webcamCaptureBtn"),
+        useButton: document.getElementById("webcamUseBtn"),
+        video: document.getElementById("webcamVideo"),
+        canvas: document.getElementById("webcamCanvas"),
+        previewImg: document.getElementById("webcamPhotoPreview"),
+        statusEl: document.getElementById("webcamStatus"),
+        onUse: (dataUrl) => setCaptured(dataUrl),
+    })
 
     try {
         initMap("#map")
@@ -179,6 +221,24 @@ window.addEventListener("DOMContentLoaded", () => {
         filterGpsInput.addEventListener("input", () => updateMapLocation(getFilteredPayloads()))
     }
 
+    if (fileInput) {
+        fileInput.addEventListener("change", () => {
+            const file = fileInput.files?.length ? fileInput.files[0] : null
+            if (!file) return
+            clearCaptured()
+            webcam?.close?.()
+            const url = URL.createObjectURL(file)
+            setPreview(url)
+        })
+    }
+
+    try {
+        const existing = localStorage.getItem("imgData")
+        if (existing && existing.startsWith("data:image/") && (!fileInput || !fileInput.files?.length)) {
+            setCaptured(existing)
+        }
+    } catch {}
+
     saveForm.addEventListener("submit", async (e) => {
         e.preventDefault()
         e.stopPropagation()
@@ -190,6 +250,12 @@ window.addEventListener("DOMContentLoaded", () => {
             const res = await postIncident(payload)
             const data = await res.text()
             console.log("response:", data)
+
+            // reset photo state after successful submit
+            clearCaptured()
+            if (fileInput) fileInput.value = ""
+            setPreview(null)
+            webcam?.close?.()
         } catch (err) {
             console.error("error:", err)
         }

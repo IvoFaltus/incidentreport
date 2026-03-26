@@ -7,6 +7,29 @@ const compressImageTo2MB = (file, maxBytes = 2 * 1024 * 1024) => {
     reader.onerror = reject;
     reader.readAsDataURL(file);
 
+    img.onload = async () => {
+      try {
+        const base64 = await compressDataUrlTo2MB(img.src, maxBytes);
+        resolve(base64);
+      } catch (err) {
+        reject(err);
+      }
+    };
+
+    img.onerror = reject;
+  });
+};
+
+const estimateBase64Bytes = (dataUrl) => Math.ceil((dataUrl.length * 3) / 4);
+
+const compressDataUrlTo2MB = (dataUrl, maxBytes = 2 * 1024 * 1024) => {
+  return new Promise((resolve, reject) => {
+    if (!dataUrl || typeof dataUrl !== "string") {
+      reject(new Error("Missing dataUrl"));
+      return;
+    }
+
+    const img = new Image();
     img.onload = () => {
       let width = img.width;
       let height = img.height;
@@ -14,6 +37,10 @@ const compressImageTo2MB = (file, maxBytes = 2 * 1024 * 1024) => {
 
       const canvas = document.createElement("canvas");
       const ctx = canvas.getContext("2d");
+      if (!ctx) {
+        reject(new Error("Canvas 2D context unavailable"));
+        return;
+      }
 
       const tryCompress = () => {
         canvas.width = width;
@@ -21,7 +48,7 @@ const compressImageTo2MB = (file, maxBytes = 2 * 1024 * 1024) => {
         ctx.drawImage(img, 0, 0, width, height);
 
         const base64 = canvas.toDataURL("image/jpeg", quality);
-        const size = Math.ceil((base64.length * 3) / 4);
+        const size = estimateBase64Bytes(base64);
 
         if (size <= maxBytes) {
           resolve(base64);
@@ -46,8 +73,9 @@ const compressImageTo2MB = (file, maxBytes = 2 * 1024 * 1024) => {
       tryCompress();
     };
 
-    img.onerror = reject;
+    img.onerror = () => reject(new Error("Failed to load image"));
+    img.src = dataUrl;
   });
 };
 
-export { compressImageTo2MB };
+export { compressImageTo2MB, compressDataUrlTo2MB };

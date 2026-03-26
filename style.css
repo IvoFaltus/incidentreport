@@ -21,3 +21,16 @@
     border-radius: 0.5rem;
 }
 
+.incident-image-preview{
+    max-width: 100%;
+    max-height: 280px;
+    border-radius: 0.5rem;
+    border: 1px solid rgba(0,0,0,0.1);
+}
+
+.webcam-video{
+    max-height: 360px;
+    object-fit: cover;
+    border-radius: 0.5rem;
+}
+
