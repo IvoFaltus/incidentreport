@@ -31,11 +31,28 @@ const arr = getStoredIncidents().filter(obj=>{
 
 	    })
 
-
     return arr
 }
 
 
+
+
+const renderdbpayloads = async()=>{
+
+
+const url = "http://wa3lm.dev.spsejecna.net/incident/select.php"
+
+
+
+const res = await fetch(url,)
+
+
+
+
+list = []
+renderIncidents(list)
+
+}
 
 
 
@@ -245,13 +262,14 @@ window.addEventListener("DOMContentLoaded", () => {
 
         try {
             const payload = await buildIncidentPayload(saveForm)
+            console.log("saving incident" + payload)
             saveIncident(payload)
 
             const res = await postIncident(payload)
             const data = await res.text()
             console.log("response:", data)
 
-            // reset photo state after successful submit
+            
             clearCaptured()
             if (fileInput) fileInput.value = ""
             setPreview(null)
