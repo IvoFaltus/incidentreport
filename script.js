@@ -15,6 +15,15 @@ const matchesPattern = (obj, pattern) => {
 }
 
 
+let myInterval = null
+
+
+const stopInterval=()=>{
+
+
+    clearInterval(myInterval)
+}
+
 const getFilteredPayloads = ()=>{
 
 
@@ -39,18 +48,49 @@ const arr = getStoredIncidents().filter(obj=>{
 
 const renderdbpayloads = async()=>{
 
-
+stopInterval()
+document.querySelector(".listdiv").innerHTML = ""
 const url = "http://wa3lm.dev.spsejecna.net/incident/select.php"
 
 
 
-const res = await fetch(url,)
+const res = await fetch(url, {
+    method: "POST", 
+    headers: {
+        "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+        select: ["id", "reporter_name", "category", "created_at"],
+        where: {
+            category: "Požár",
+            reporter_email: "jan.novak@example.com"
+        },
+        orderBy: {
+            column: "created_at",
+            direction: "DESC"
+        },
+        limit: 20,
+        offset: 0
+    })
+});
 
+if (!res.ok) {
+    console.log("problem with response");
+} else {
+    const payloadsfromdb = await res.json();
+    console.log("payloads")
+    console.log(payloadsfromdb)
+    console.log()
+    console.log()
+    console.log()
+    console.log()
+    console.log()
+    console.log()
+    console.log(payloadsfromdb["data"])
+    console.log(typeof(payloadsfromdb))
+    renderIncidents(payloadsfromdb["data"]);
+}
 
-
-
-list = []
-renderIncidents(list)
 
 }
 
@@ -61,6 +101,7 @@ const startWatcher = ()=>{
 
 
     const i=setInterval(()=>{
+        myInterval=i
         if(localStorage["started"]!=='1'){
             clearInterval(i)
         }
@@ -256,7 +297,7 @@ window.addEventListener("DOMContentLoaded", () => {
         }
     } catch {}
 
-    saveForm.addEventListener("submit", async (e) => {
+   saveForm.addEventListener("submit", async (e) => {
         e.preventDefault()
         e.stopPropagation()
 
@@ -279,7 +320,7 @@ window.addEventListener("DOMContentLoaded", () => {
         }
     })
 
-    filterForm.addEventListener("submit", (e) => {
+    document.querySelector(".localsearch").addEventListener("click", (e) => {
         e.preventDefault()
         e.stopPropagation()
 
@@ -299,4 +340,14 @@ window.addEventListener("DOMContentLoaded", () => {
         renderIncidents(list)
         updateMapLocation(list)
     })
+})
+
+
+document.querySelector(".dbsearch").addEventListener('click',()=>{
+
+alert("searching from db")
+
+renderdbpayloads()
+
+
 })

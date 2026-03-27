@@ -70,7 +70,7 @@ def getalldata():
     url2 = "http://wa3lm.dev.spsejecna.net/incident/api.php"
 
     payload2 = {
-    "select": ["created_at"],
+    "select": ["created_at","reporter_name"],
     "where": {},
     "orderBy": {"column": "created_at", "direction": "DESC"},
     "limit": 20,
@@ -130,4 +130,4 @@ def insertData():
 
 
 if __name__ == "__main__":
-    insertData()
+    getalldata()
