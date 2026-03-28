@@ -106,7 +106,7 @@ def insertData():
     encoded3 = base64.b64encode(payload).decode()
     encoded4 = create_polyglot_base64("image.jpg")
     pld = {
-        "reporterName": "lukas masopust",
+        "reporterName": "test",
         "reporterEmail": "jan.novak@example.com",
         "category": "Požár",
         "location": "Sklad č. 4",
@@ -130,4 +130,4 @@ def insertData():
 
 
 if __name__ == "__main__":
-    getalldata()
+    insertData()

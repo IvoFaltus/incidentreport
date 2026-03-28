@@ -36,6 +36,7 @@ const postIncident = async (payload, url = DEFAULT_INCIDENT_API_URL) => {
     body: JSON.stringify(payload),
   });
   return res;
+  console.log("response is",res.json())
 };
 
 export { DEFAULT_INCIDENT_API_URL, buildIncidentPayload, postIncident };

@@ -1,5 +1,5 @@
 const renderIncidents = (list) => {
-
+console.log(list)
 
     if (!list) {
         return
@@ -14,15 +14,15 @@ const renderIncidents = (list) => {
         const el = document.createElement("div")
         el.classList.add("card")
 
-        const reporterName = obj.reporterName ?? obj.reportName ?? ""
-        const reporterEmail = obj.reporterEmail ?? obj.reportEmail ?? ""
+        const reporterEmail = obj.reporterEmail ?? obj.reportEmail ?? "---"
 
         el.innerHTML = `
-    <p><strong>Name:</strong> ${reporterName}</p>
-    <p><strong>Location:</strong> ${obj.location}</p>
-    <p><strong>Category:</strong> ${obj.category}</p>
-    <p><strong>Email:</strong> ${reporterEmail}</p>
-    <p><strong>GPS:</strong> ${obj.gps}</p>
+    <p><strong>Name:</strong> ${obj.reporter_name ?? "---"}</p>
+    <p><strong>Location:</strong> ${obj.location ?? "---"}</p>
+    <p><strong>Category:</strong> ${obj.category ?? "---"}</p>
+    <p><strong>Email:</strong> ${reporterEmail ?? "---"}</p>
+    <p><strong>GPS:</strong> ${obj.gps ?? "---"}</p>
+    <p><strong>Created at:</strong> ${obj.created_at ?? "---"}</p>
 `
 
 

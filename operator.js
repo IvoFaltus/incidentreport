@@ -1,7 +1,6 @@
-import { initIncidentPosting } from "./incidentPosting.js";
 import { initOperatorUI } from "./operatorUI.js";
 
 window.addEventListener("DOMContentLoaded", () => {
-  initIncidentPosting();
   initOperatorUI();
 });
+
