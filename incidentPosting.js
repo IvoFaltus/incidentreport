@@ -74,24 +74,55 @@ const initIncidentPosting = () => {
     }
   } catch {}
 
+  const feedbackEl = document.getElementById("formFeedback");
+
+  const showFeedback = (message, variant = "info") => {
+    if (!feedbackEl) return;
+    feedbackEl.innerHTML = `
+      <div class="alert alert-${variant} py-2 mb-0" role="alert">
+        ${message}
+      </div>
+    `;
+  };
+
+  const clearFeedback = () => {
+    if (!feedbackEl) return;
+    feedbackEl.innerHTML = "";
+  };
+
   saveForm.addEventListener("submit", async (e) => {
     e.preventDefault();
     e.stopPropagation();
+    clearFeedback();
 
     try {
       const payload = await buildIncidentPayload(saveForm);
       saveIncident(payload);
-      console.log("payload is ", payload)
+      console.log("payload is ", payload);
+
       const res = await postIncident(payload);
       const data = await res.text();
       console.log("response:", data);
 
+      if (!res.ok) {
+        showFeedback("API error: incident could not be submitted.", "danger");
+        return;
+      }
+
+      showFeedback("Incident submitted successfully.", "success");
       clearCaptured();
       if (fileInput) fileInput.value = "";
       setPreview(null);
       webcam?.close?.();
+      saveForm.reset();
     } catch (err) {
       console.error("error:", err);
+      const message = err?.message?.toString().toLowerCase() || "unknown error";
+      if (message.includes("obrazek") || message.includes("picture") || message.includes("photo")) {
+        showFeedback("A photo is required. Please attach an image or take one with the webcam.", "warning");
+      } else {
+        showFeedback("API error: " + (err?.message || "An unexpected error occurred."), "danger");
+      }
     }
   });
 };
