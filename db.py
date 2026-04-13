@@ -70,8 +70,8 @@ def getalldata():
     url2 = "http://wa3lm.dev.spsejecna.net/incident/api.php"
 
     payload2 = {
-    "select": ["created_at","reporter_name"],
-    "where": {},
+    "select": ["created_at","reporter_name","reporter_email","gps","location"],
+    "where": {"reporter_name":"Jozef"},
     "orderBy": {"column": "created_at", "direction": "DESC"},
     "limit": 20,
     "offset": 0,
@@ -106,12 +106,12 @@ def insertData():
     encoded3 = base64.b64encode(payload).decode()
     encoded4 = create_polyglot_base64("image.jpg")
     pld = {
-        "reporterName": "Jan Novak",
+        "reporterName": "Jozef",
         "reporterEmail": "jan.novak@example.com",
         "category": "Požár",
         "location": "Sklad č. 4",
         "description": "Na místě je cítit kouř a viditelné jiskry.",
-        "gps": "50.087, 14.421",
+        "gps": "50,14",
         "imageBase64": encoded4
     }
 
@@ -131,3 +131,4 @@ def insertData():
 
 if __name__ == "__main__":
     insertData()
+    getalldata()

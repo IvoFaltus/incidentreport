@@ -93,7 +93,7 @@ const renderDbPayloads = async () => {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
-      select: ["id", "reporter_name", "category", "created_at"],
+      select: ["id", "reporter_name", "category", "created_at","reporter_email","gps","location"],
       where: conditions,
       orderBy: { column: "created_at", direction: "DESC" },
       limit: 20,
